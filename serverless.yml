@@ -1,0 +1,12 @@
+service: soccer-trivia
+provider:
+  name: aws
+  runtime: nodejs4.3
+
+functions:
+  skill:
+    handler: skill/index.handler
+    events:
+      - alexaSkill
+    environment:
+      DEBUG: voxa
