@@ -15,5 +15,8 @@
     "express.js"
   ],
   "author": "Carlos A. Vaca Morales",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "voxa": "^2.0.0"
+  }
 }
