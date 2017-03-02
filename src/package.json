@@ -1,0 +1,19 @@
+{
+  "name": "soccer-alexa-voxa",
+  "version": "1.0.0",
+  "description": "Soccer Alexa Tivia using Voxa Framework",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "alexa",
+    "soccer",
+    "trivia",
+    "voxa",
+    "node.js",
+    "express.js"
+  ],
+  "author": "Carlos A. Vaca Morales",
+  "license": "ISC"
+}

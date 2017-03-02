@@ -1,0 +1,45 @@
+{
+  "intents": [
+    {
+      "intent": "AnswerIntent",
+      "slots": [
+        {
+          "name": "Number",
+          "type": "AMAZON.NUMBER"
+        },
+        {
+          "name": "Person",
+          "type": "AMAZON.PLAYERS"
+        },
+        {
+          "name": "Country",
+          "type": "AMAZON.Country"
+        }
+      ]
+    },
+    {
+      "intent": "DontKnowIntent"
+    },
+    {
+      "intent": "AMAZON.StartOverIntent"
+    },
+    {
+      "intent": "AMAZON.RepeatIntent"
+    },
+    {
+      "intent": "AMAZON.HelpIntent"
+    },
+    {
+      "intent": "AMAZON.YesIntent"
+    },
+    {
+      "intent": "AMAZON.NoIntent"
+    },
+    {
+      "intent": "AMAZON.StopIntent"
+    },
+    {
+      "intent": "AMAZON.CancelIntent"
+    }
+  ]
+}
