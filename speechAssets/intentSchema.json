@@ -9,7 +9,7 @@
         },
         {
           "name": "Person",
-          "type": "AMAZON.PLAYERS"
+          "type": "PLAYERS"
         },
         {
           "name": "Country",
