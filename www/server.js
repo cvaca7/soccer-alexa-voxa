@@ -18,9 +18,9 @@ app
     .use(morgan('dev'))
     .use(bodyParser.json())
     .use(bodyParser.urlencoded( { extended: false } ) )
-    .use(router.router);
+    .use(routes.router);
 
 const server = http.createServer(app);
 server.listen(config.server.port, () => {
-   console.log(`Server listening on port ${ config.server.port }`);
+    console.log('Server listening on port %d.', config.server.port);
 });

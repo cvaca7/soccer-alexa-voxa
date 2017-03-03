@@ -1,6 +1,7 @@
 'use strict';
-exports.register = (skill) => {
-    skill
-        .onIntent('LaunchIntent', () => ( { reply: 'Intent.Launch', to: 'entry' } ) )
-        .onIntent('AMAZON.HelpIntent', () => ( { reply: 'Intent.Help', to: 'die' } ) )
+
+exports.register = function register(skill) {
+    skill.onIntent('LaunchIntent', () => ( { reply: 'Intent.Launch', to: 'entry' } ) );
+    skill.onIntent('AMAZON.HelpIntent', () => ( { reply: 'Intent.Help', to: 'die' } ) );
+    skill.onIntent('SomethingIntent', () => ( { reply: 'Intent.doSomething', to: 'entry' } ));
 };

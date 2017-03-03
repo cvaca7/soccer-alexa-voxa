@@ -1,2 +1,3 @@
 'use strict';
-exports.router = require('../infraestructure/mount')(__dirname);
+
+exports.router = require('../infrastructure/mount.js')(__dirname);

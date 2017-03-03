@@ -5,7 +5,7 @@ const
     skill = require('../../skill'),
     config = require('../../config');
 
-exports.mountPath = './skill';
+exports.mountPath = '/skill';
 
 if(config.server.hostSkill){
     router.post('/', (request,response,next) => {

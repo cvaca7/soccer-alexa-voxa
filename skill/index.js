@@ -1,6 +1,5 @@
 'use strict';
 const skill = require('./MainStateMachine');
-require('./states');
 
 exports.handler = (event, context, callback) => {
     skill.execute(event)

@@ -1,6 +1,6 @@
 'use strict';
 
-const views = (function views() => {
+const views = (() => {
     return {
         Intent : {
             Launch : {
@@ -8,6 +8,9 @@ const views = (function views() => {
             },
             Help : {
                 stay : 'Do you want to get back on playing?'
+            },
+            doSomething: {
+                tell: 'Hello, welcome!'
             }
         }
     }
