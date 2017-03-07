@@ -3,16 +3,11 @@ const questions = require('./data/questions');
 let resources = {
     answerCount : 4,
     gameLength : 10,
+
     currIndex : 0,
     currQuestion : '',
     score: 0,
-    gameStatus : {
-        trivia: '_TRIVIAMODE',
-        start: '_STARTMODE',
-        help: '_HELPMODE'
-    },
-    gameName : 'Football Soccer Trivia',
-    welcomeMessage : 'Welcome to %s. I will ask you %s questions, try to get as many right as you can. Let\'s begin. ',
+
     questions : questions['QUESTIONS_EN_US'],
     questionsReordered : [],
     tellQuestion : function(i,len){
@@ -72,7 +67,7 @@ function handleResponse(alexaEvent){
     //Number
     if(res.Number){
         let val = parseInt(res.Number);
-        if(val < (data.answerCount + 1) && ( val ==  correctAnswerIndex) || (val == correctAnswer)){
+        if( val ==  (correctAnswerIndex + 1) || val == correctAnswer){
             alexaEvent.model.resources.score ++;
             alexaEvent.model.resources.isCorrect = 'correct';
         }
@@ -142,6 +137,10 @@ function populateGameQuestions(translatedQuestions) {
     return gameQuestions;
 }
 
+function resetGame(alexaEvent){
+    alexaEvent.model.resources.isCorrect = 'wrong';
+    alexaEvent.model.resources.score = alexaEvent.model.resources.currIndex = 0;
+}
 
 
 exports.register = (skill) => {
@@ -162,27 +161,38 @@ exports.register = (skill) => {
 
     skill.onIntent('AnswerIntent', (alexaEvent) => {
 
-        let
-            data = alexaEvent.model.resources,
-            currIndex = data.currIndex,
-            gameLen = data.gameLength,
-            res = alexaEvent.intent.params;
+        try{
+            let
+                data = alexaEvent.model.resources,
+                currIndex = data.currIndex,
+                gameLen = data.gameLength,
+                res = alexaEvent.intent.params;
 
-        console.log('slots: ' + JSON.stringify(res));
+            console.log('slots: ' + JSON.stringify(res));
 
 
-        //validate if the game is ended
-        if(currIndex == gameLen - 1){
-            return { reply: 'Intent.Finish', to: 'die' };
+            //validate if the game is ended
+            if(currIndex == gameLen - 1){
+                return { reply: 'Intent.Finish', to: 'die' };
+            }
+
+            if(!isValidAnswer((res))){
+                return { reply: 'Intent.Error', to: 'die' };
+            }
+            else{
+                handleResponse(alexaEvent);
+                return { reply: 'Intent.Question', to: 'die' };
+            }
         }
+        catch (err){
+            resetGame(alexaEvent);
 
-        if(!isValidAnswer((res))){
+            console.log('err: ', err.message);
+            alexaEvent.model.resources.error = err.message;
+
             return { reply: 'Intent.Error', to: 'die' };
         }
-        else{
-            handleResponse(alexaEvent);
-            return { reply: 'Intent.Question', to: 'die' };
-        }
+
 
     });
 

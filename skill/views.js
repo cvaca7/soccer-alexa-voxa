@@ -12,7 +12,7 @@ const views = (() => {
                 ask: `Your answer is {isCorrect}, your score now is {score}. ${timeBreak} Next Question. ${timeBreak}  {question}`
             },
             Error : {
-                ask: `Your answer is incorrect, please repeat it again.`
+                tell: `And error was ocurred {error}`
             },
             Finish : {
                 tell : 'Thank you for being playing with me, we\'ll play another time. Goodbye!'

@@ -13,5 +13,8 @@ exports.isCorrect = (model) => {
 };
 
 exports.score = (model) => {
-    return model.resources.score
+    return model.resources.score;
+};
+exports.error = (model) => {
+    return model.resources.error;
 };
