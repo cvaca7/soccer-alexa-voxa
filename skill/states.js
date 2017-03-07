@@ -14,77 +14,98 @@ let resources = {
     welcomeMessage : 'Welcome to %s. I will ask you %s questions, try to get as many right as you can. Let\'s begin. ',
     questions : questions['QUESTIONS_EN_US'],
     questionsReordered : [],
-
-
-    correctAnswerMessage : 'The correct answer is %s: %s. ',
-
-    answerIsMessage : 'That answer is ',
-    answerCorrectMessage : 'correct. ',
-    answerWrongMessage : 'wrong. ',
-
-    tellQuestion : 'Question %s of %s. ',
-    gameOver : 'You got %s out of %s questions correct. Thank you for playing!',
-    scoreMessage : 'Your score is %s. ',
-
-    noMessage : 'Ok, we\'ll play another time. Goodbye!'
+    isCorrect : 'correct'
 };
 
-exports.register = function register(skill) {
+function initialConfiguration(alexaEvent){
+    alexaEvent.model.resources = resources;
+    let translatedQuestions = alexaEvent.model.resources.questions;
 
+    //Set Random questions index
+    let gameQuestions = populateGameQuestions(translatedQuestions);
+    alexaEvent.model.resources.questionsReordered = gameQuestions;
+}
 
-    //On alexa user intents
-    skill.onIntent('LaunchIntent', (alexaEvent) => {
-        alexaEvent.model.resources = resources;
-        let translatedQuestions = alexaEvent.model.resources.questions;
+function isValidAnswer(response){
+    let isValid = false;
 
-        //Random questions
-        let gameQuestions = populateGameQuestions(translatedQuestions);
-        console.log(gameQuestions);
-        alexaEvent.model.resources.questionsReordered = gameQuestions;
+    //Validating number
+    if(response.Number && !isNaN(parseInt(response.Number)))
+        isValid = true;
+    //Validating person name
+    else if(response.Person && response.Person.length > 0)
+        isValid = true;
+    else if(response.Country && response.Country.length > 0)
+        isValid = true;
 
-        return { reply: 'Intent.Launch', to: 'entry' }
-    });
+    return isValid;
+}
 
-    skill.onIntent('AnswerIntent', (alexaEvent) => {
-
-        let data = alexaEvent.model.resources, res = alexaEvent.intent.params;
-        console.log(data);
-        console.log(res);
-
-
-        return { reply: 'Intent.Question', to: 'die' };
-
-        //let intent = alexaEvent.intent;
-        //console.log(_response);
-
-        //console.log(resources);
-        //console.log('index: ', resources.currIndex);
-        //console.log('question: ', Object.keys(resources.questionsReordered[resources.currIndex]) );
-        //console.log('response: ', intent.params);
-
-    });
-
-};
-
-function handleQuestion(resources){
+function handleResponse(alexaEvent){
     let
-        speechOutput = "",
-        gameQuestions = resources.questionsReordered,
-        currIndex = resources.currIndex,
-        correctAnswerIndex = Math.floor(Math.random() * (resources.answerCount)),
-        spokenQuestion = Object.keys(currIndex);
+        data = alexaEvent.model.resources,
+        questions = data.questions,
 
-        //tell question number
-        speechOutput += resources.tellQuestion(currIndex,resources.gameLength);
-        //tell question
-        speechOutput += spokenQuestion;
-        return {  reply: 'Intent.Answer', to: 'responseState'  };
+        currIndex = data.currIndex,
+        questionsIndex = data.questionsReordered[currIndex],
+
+        currQuestion = questions[questionsIndex],
+        currAnswers = currQuestion[0],
+
+        spokenQuestion = Object.keys(currQuestion),
+        spokenAnswer = generateResponse(currAnswers),
+
+        correctAnswer = currAnswers[0],
+        correctAnswerIndex = 0;
+
+
+    //Checking response, editing score
+    let res = alexaEvent.intent.params;
+    alexaEvent.model.resources.isCorrect = 'wrong';
+
+    //Number
+    if(res.Number){
+        let val = parseInt(res.Number);
+        if(val < (data.answerCount + 1) && ( val ==  correctAnswerIndex) || (val == correctAnswer)){
+            alexaEvent.model.resources.score ++;
+            alexaEvent.model.resources.isCorrect = 'correct';
+        }
+    }
+    //Country
+    else if(res.Country && res.Country.toLowerCase() == correctAnswer.toLowerCase()){
+        alexaEvent.model.resources.score ++;
+        alexaEvent.model.resources.isCorrect = 'correct';
+    }
+    //Person names
+    else if(res.Person && res.Person.toLowerCase() == correctAnswer.toLowerCase()){
+        alexaEvent.model.resources.score ++;
+        alexaEvent.model.resources.isCorrect = 'correct';
+    }
+
+
+    //Setting up new question to be told
+    let speechOutput = "";
+
+
+    //tell question number
+    speechOutput += data.tellQuestion(currIndex,data.gameLength);
+    //tell question
+    speechOutput += spokenQuestion;
+    //tell answers
+    speechOutput += spokenAnswer;
+
+
+    alexaEvent.model.resources.currQuestion = speechOutput;
+    alexaEvent.model.resources.currIndex ++;
 }
 
-function handleResponse(resources){
-
+function generateResponse(answers){
+    let res = "";
+    for(let i = 0; i < answers.length; i++){
+         res += `${i}. ${answers[i]}. `;
+    }
+    return res;
 }
-
 
 function populateGameQuestions(translatedQuestions) {
     var gameQuestions = [];
@@ -112,32 +133,45 @@ function populateGameQuestions(translatedQuestions) {
 
     return gameQuestions;
 }
-function populateRoundAnswers(gameQuestionIndexes, correctAnswerIndex, correctAnswerTargetLocation, translatedQuestions) {
-    var answers = [];
-    var answersCopy = translatedQuestions[gameQuestionIndexes[correctAnswerIndex]][Object.keys(translatedQuestions[gameQuestionIndexes[correctAnswerIndex]])[0]].slice();
 
-    var index = answersCopy.length;
 
-    if (index < resources.ANSWER_COUNT) {
-        throw new Error("Not enough answers for question. ", index, resources.ANSWER_COUNT);
-    }
+exports.register = (skill) => {
 
-    // Shuffle the answers, excluding the first element which is the correct answer.
-    for (var j = 1; j < answersCopy.length; j++){
-        var rand = Math.floor(Math.random() * (index - 1)) + 1;
-        index -= 1;
 
-        var temp = answersCopy[index];
-        answersCopy[index] = answersCopy[rand];
-        answersCopy[rand] = temp;
-    }
+    //On alexa user intents
+    skill.onIntent('LaunchIntent', (alexaEvent) => {
+        //Initial Configuration
+        initialConfiguration(alexaEvent);
+        //Generating first question
+        handleResponse();
+        return { reply: 'Intent.Launch', to: 'entry' }
+    });
 
-    // Swap the correct answer into the target location
-    for (var i = 0; i < ANSWER_COUNT; i++) {
-        answers[i] = answersCopy[i];
-    }
-    temp = answers[0];
-    answers[0] = answers[correctAnswerTargetLocation];
-    answers[correctAnswerTargetLocation] = temp;
-    return answers;
-}
+    skill.onIntent('AnswerIntent', (alexaEvent) => {
+
+        let
+            data = alexaEvent.model.resources,
+            currIndex = data.currIndex,
+            gameLen = data.gameLength,
+            res = alexaEvent.intent.params;
+
+        console.log(data);
+        console.log(res);
+
+
+        //validate if the game is ended
+        if(currIndex == gameLen - 1){
+            return { reply: 'Intent.Finish', to: 'die' };
+        }
+
+        if(!isValidAnswer((res))){
+            return { reply: 'Intent.Error', to: 'die' };
+        }
+        else{
+            handleResponse(alexaEvent);
+            return { reply: 'Intent.Question', to: 'die' };
+        }
+
+    });
+
+};
