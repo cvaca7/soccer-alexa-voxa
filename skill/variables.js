@@ -15,14 +15,3 @@ exports.isCorrect = (model) => {
 exports.score = (model) => {
     return model.resources.score
 };
-
-/*
-exports = (model) => {
-    return {
-        resources : model.resources,
-        question : model.resources.currQuestion,
-        isCorrect : model.resources.isCorrect,
-        score : model.resources.score
-    };
-};
- */

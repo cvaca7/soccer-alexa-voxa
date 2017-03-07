@@ -54,12 +54,7 @@ function handleResponse(alexaEvent){
         currIndex = data.currIndex,
         questionsIndex = data.questionsReordered[currIndex],
 
-        currQuestionObj = questions[questionsIndex];
-
-    //console.log('currIndex: ', currIndex);
-    //console.log('questionsIndex: ', questionsIndex);
-    //console.log('currQuestion: ', currQuestionObj);
-    let
+        currQuestionObj = questions[questionsIndex],
         currAnswers = Object.values(currQuestionObj)[0],
 
         spokenQuestion = Object.keys(currQuestionObj)[0],
@@ -68,9 +63,6 @@ function handleResponse(alexaEvent){
         correctAnswerIndex = 0,
         correctAnswer = currAnswers[correctAnswerIndex];
 
-    //console.log('currAnswers', currAnswers.length);
-    //console.log('spokenAnswer', spokenAnswer);
-    //console.log('correctAnswer', correctAnswer);
 
     //Checking response, editing score
 
@@ -85,16 +77,17 @@ function handleResponse(alexaEvent){
             alexaEvent.model.resources.isCorrect = 'correct';
         }
     }
-    //Country
-    else if(res.Country && res.Country.toLowerCase() == correctAnswer.toLowerCase()){
-        alexaEvent.model.resources.score ++;
-        alexaEvent.model.resources.isCorrect = 'correct';
-    }
     //Person names
     else if(res.Person && res.Person.toLowerCase() == correctAnswer.toLowerCase()){
         alexaEvent.model.resources.score ++;
         alexaEvent.model.resources.isCorrect = 'correct';
     }
+    //Country
+    else if(res.Country && res.Country.toLowerCase() == correctAnswer.toLowerCase()){
+        alexaEvent.model.resources.score ++;
+        alexaEvent.model.resources.isCorrect = 'correct';
+    }
+
 
 
     //Setting up new question to be told
@@ -102,7 +95,7 @@ function handleResponse(alexaEvent){
 
 
     //tell question number
-    speechOutput += data.tellQuestion(currIndex + 1,data.gameLength) + '. ' ;
+    speechOutput += `Question ${currIndex + 1} of ${data.gameLength}. ` //data.tellQuestion(currIndex + 1,data.gameLength) + '. ' ;
     //tell question
     speechOutput += spokenQuestion + '. ' ;
     //tell answers
@@ -175,7 +168,7 @@ exports.register = (skill) => {
             gameLen = data.gameLength,
             res = alexaEvent.intent.params;
 
-        console.log('slots: ' + res);
+        console.log('slots: ' + JSON.stringify(res));
 
 
         //validate if the game is ended
