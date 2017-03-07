@@ -44,7 +44,7 @@ module.exports = {
             ]
         },
         {
-            'Which selections had won the most world cup?' : [
+            'Which selection had won the most world cup?' : [
                 'Brazil',
                 'Germany',
                 'Italy',

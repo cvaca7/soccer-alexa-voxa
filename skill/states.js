@@ -4,6 +4,7 @@ let resources = {
     answerCount : 4,
     gameLength : 10,
     currIndex : 0,
+    currQuestion : '',
     score: 0,
     gameStatus : {
         trivia: '_TRIVIAMODE',
@@ -14,6 +15,9 @@ let resources = {
     welcomeMessage : 'Welcome to %s. I will ask you %s questions, try to get as many right as you can. Let\'s begin. ',
     questions : questions['QUESTIONS_EN_US'],
     questionsReordered : [],
+    tellQuestion : function(i,len){
+        return `Question ${i} of ${len}`;
+    },
     isCorrect : 'correct'
 };
 
@@ -42,6 +46,7 @@ function isValidAnswer(response){
 }
 
 function handleResponse(alexaEvent){
+
     let
         data = alexaEvent.model.resources,
         questions = data.questions,
@@ -50,16 +55,21 @@ function handleResponse(alexaEvent){
         questionsIndex = data.questionsReordered[currIndex],
 
         currQuestion = questions[questionsIndex],
-        currAnswers = currQuestion[0],
+        spokenQuestion = Object.keys(currQuestion)[0],
 
-        spokenQuestion = Object.keys(currQuestion),
+        currAnswers = Object.values(currQuestion)[0],
         spokenAnswer = generateResponse(currAnswers),
 
-        correctAnswer = currAnswers[0],
-        correctAnswerIndex = 0;
+        correctAnswerIndex = 0,
+        correctAnswer = currAnswers[correctAnswerIndex];
 
+    console.log('spokenQuestion', spokenQuestion);
+    console.log('currAnswers', currAnswers.length);
+    console.log('spokenAnswer', spokenAnswer);
+    console.log('correctAnswer', correctAnswer);
 
     //Checking response, editing score
+
     let res = alexaEvent.intent.params;
     alexaEvent.model.resources.isCorrect = 'wrong';
 
@@ -88,12 +98,13 @@ function handleResponse(alexaEvent){
 
 
     //tell question number
-    speechOutput += data.tellQuestion(currIndex,data.gameLength);
+    speechOutput += data.tellQuestion(currIndex + 1,data.gameLength) + '. ' ;
     //tell question
-    speechOutput += spokenQuestion;
+    speechOutput += spokenQuestion + '. ' ;
     //tell answers
     speechOutput += spokenAnswer;
 
+    console.log('speechOutput',speechOutput);
 
     alexaEvent.model.resources.currQuestion = speechOutput;
     alexaEvent.model.resources.currIndex ++;
@@ -101,8 +112,8 @@ function handleResponse(alexaEvent){
 
 function generateResponse(answers){
     let res = "";
-    for(let i = 0; i < answers.length; i++){
-         res += `${i}. ${answers[i]}. `;
+    for(var i = 0; i < answers.length; i++){
+         res += `${i + 1}. ${answers[i]}. `;
     }
     return res;
 }
@@ -135,6 +146,7 @@ function populateGameQuestions(translatedQuestions) {
 }
 
 
+
 exports.register = (skill) => {
 
 
@@ -143,7 +155,7 @@ exports.register = (skill) => {
         //Initial Configuration
         initialConfiguration(alexaEvent);
         //Generating first question
-        handleResponse();
+        handleResponse(alexaEvent);
         return { reply: 'Intent.Launch', to: 'entry' }
     });
 
