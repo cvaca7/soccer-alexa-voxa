@@ -54,19 +54,23 @@ function handleResponse(alexaEvent){
         currIndex = data.currIndex,
         questionsIndex = data.questionsReordered[currIndex],
 
-        currQuestion = questions[questionsIndex],
-        spokenQuestion = Object.keys(currQuestion)[0],
+        currQuestionObj = questions[questionsIndex];
 
-        currAnswers = Object.values(currQuestion)[0],
+    //console.log('currIndex: ', currIndex);
+    //console.log('questionsIndex: ', questionsIndex);
+    //console.log('currQuestion: ', currQuestionObj);
+    let
+        currAnswers = Object.values(currQuestionObj)[0],
+
+        spokenQuestion = Object.keys(currQuestionObj)[0],
         spokenAnswer = generateResponse(currAnswers),
 
         correctAnswerIndex = 0,
         correctAnswer = currAnswers[correctAnswerIndex];
 
-    console.log('spokenQuestion', spokenQuestion);
-    console.log('currAnswers', currAnswers.length);
-    console.log('spokenAnswer', spokenAnswer);
-    console.log('correctAnswer', correctAnswer);
+    //console.log('currAnswers', currAnswers.length);
+    //console.log('spokenAnswer', spokenAnswer);
+    //console.log('correctAnswer', correctAnswer);
 
     //Checking response, editing score
 
@@ -159,6 +163,10 @@ exports.register = (skill) => {
         return { reply: 'Intent.Launch', to: 'entry' }
     });
 
+    skill.onState('playing', (alexaEvent) => {
+
+    });
+
     skill.onIntent('AnswerIntent', (alexaEvent) => {
 
         let
@@ -167,8 +175,7 @@ exports.register = (skill) => {
             gameLen = data.gameLength,
             res = alexaEvent.intent.params;
 
-        console.log(data);
-        console.log(res);
+        console.log('slots: ' + res);
 
 
         //validate if the game is ended
