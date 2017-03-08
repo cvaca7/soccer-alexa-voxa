@@ -64,6 +64,16 @@ function handleResponse(alexaEvent){
         let res = alexaEvent.intent.params;
         alexaEvent.model.resources.isCorrect = 'wrong';
 
+        if(res.Person){
+            let person = correctAnswer.toLowerCase().indexOf(res.Person.toLowerCase());
+            console.log('person', person, person >=0);
+        }
+
+        if(res.Country){
+            let country = correctAnswer.toLowerCase().indexOf(res.Country.toLowerCase());
+            console.log('country', country, country >=0);
+        }
+
         //Number
         if(res.Number){
             let val = parseInt(res.Number);
@@ -73,12 +83,12 @@ function handleResponse(alexaEvent){
             }
         }
         //Person names
-        else if(res.Person && (res.Person.toLowerCase().indexOf(correctAnswer.toLowerCase()) >= 0 )){
+        else if(res.Person && correctAnswer.toLowerCase().indexOf(res.Person.toLowerCase()) >= 0){
                 alexaEvent.model.resources.score ++;
                 alexaEvent.model.resources.isCorrect = 'correct';
         }
         //Country
-        else if(res.Country || (res.Country.toLowerCase().indexOf(correctAnswer.toLowerCase()) >= 0 )){
+        else if(res.Country && correctAnswer.toLowerCase().indexOf(res.Country.toLowerCase()) >= 0){
                 alexaEvent.model.resources.score ++;
                 alexaEvent.model.resources.isCorrect = 'correct';
         }
