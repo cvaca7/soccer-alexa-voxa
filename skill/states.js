@@ -10,17 +10,18 @@ let resources = {
 
     questions : questions['QUESTIONS_EN_US'],
     questionsReordered : [],
-    tellQuestion : function(i,len){
-        return `Question ${i} of ${len}`;
-    },
     isCorrect : 'correct'
 };
 
 function initialConfiguration(alexaEvent){
+    //Setting up my resources
     alexaEvent.model.resources = resources;
-    let translatedQuestions = alexaEvent.model.resources.questions;
+
+    //Hard resetting game
+    resetGame(alexaEvent);
 
     //Set Random questions index
+    let translatedQuestions = alexaEvent.model.resources.questions;
     let gameQuestions = populateGameQuestions(translatedQuestions);
     alexaEvent.model.resources.questionsReordered = gameQuestions;
 }
@@ -42,55 +43,63 @@ function isValidAnswer(response){
 
 function handleResponse(alexaEvent){
 
-    let
-        data = alexaEvent.model.resources,
-        questions = data.questions,
+    //Checking for response, is any
 
+    let data = alexaEvent.model.resources,
         currIndex = data.currIndex,
+        questions = data.questions;
+
+    if(currIndex > 0){
+        let questionsIndex = data.questionsReordered[currIndex - 1],
+
+            currQuestionObj = questions[questionsIndex],
+            answers = Object.values(currQuestionObj)[0],
+
+            correctAnswerIndex = 0,
+            correctAnswer = answers[correctAnswerIndex];
+
+        //Checking response, editing score
+        console.log('correctAnswer ', correctAnswer);
+
+        let res = alexaEvent.intent.params;
+        alexaEvent.model.resources.isCorrect = 'wrong';
+
+        //Number
+        if(res.Number){
+            let val = parseInt(res.Number);
+            if( val ==  (correctAnswerIndex + 1) || val == correctAnswer){
+                alexaEvent.model.resources.score ++;
+                alexaEvent.model.resources.isCorrect = 'correct';
+            }
+        }
+        //Person names
+        else if(res.Person && (res.Person.toLowerCase().indexOf(correctAnswer.toLowerCase()) >= 0 )){
+                alexaEvent.model.resources.score ++;
+                alexaEvent.model.resources.isCorrect = 'correct';
+        }
+        //Country
+        else if(res.Country || (res.Country.toLowerCase().indexOf(correctAnswer.toLowerCase()) >= 0 )){
+                alexaEvent.model.resources.score ++;
+                alexaEvent.model.resources.isCorrect = 'correct';
+        }
+    }
+
+    //Preparing next question and answer
+    let
         questionsIndex = data.questionsReordered[currIndex],
 
         currQuestionObj = questions[questionsIndex],
-        currAnswers = Object.values(currQuestionObj)[0],
+        answers = Object.values(currQuestionObj)[0],
 
         spokenQuestion = Object.keys(currQuestionObj)[0],
-        spokenAnswer = generateResponse(currAnswers),
-
-        correctAnswerIndex = 0,
-        correctAnswer = currAnswers[correctAnswerIndex];
-
-
-    //Checking response, editing score
-
-    let res = alexaEvent.intent.params;
-    alexaEvent.model.resources.isCorrect = 'wrong';
-
-    //Number
-    if(res.Number){
-        let val = parseInt(res.Number);
-        if( val ==  (correctAnswerIndex + 1) || val == correctAnswer){
-            alexaEvent.model.resources.score ++;
-            alexaEvent.model.resources.isCorrect = 'correct';
-        }
-    }
-    //Person names
-    else if(res.Person && res.Person.toLowerCase() == correctAnswer.toLowerCase()){
-        alexaEvent.model.resources.score ++;
-        alexaEvent.model.resources.isCorrect = 'correct';
-    }
-    //Country
-    else if(res.Country && res.Country.toLowerCase() == correctAnswer.toLowerCase()){
-        alexaEvent.model.resources.score ++;
-        alexaEvent.model.resources.isCorrect = 'correct';
-    }
-
-
+        spokenAnswer = generateResponse(answers);
 
     //Setting up new question to be told
     let speechOutput = "";
 
 
     //tell question number
-    speechOutput += `Question ${currIndex + 1} of ${data.gameLength}. ` //data.tellQuestion(currIndex + 1,data.gameLength) + '. ' ;
+    speechOutput += `Question ${currIndex + 1} of ${data.gameLength}. `;
     //tell question
     speechOutput += spokenQuestion + '. ' ;
     //tell answers
@@ -142,10 +151,7 @@ function resetGame(alexaEvent){
     alexaEvent.model.resources.score = alexaEvent.model.resources.currIndex = 0;
 }
 
-
 exports.register = (skill) => {
-
-
     //On alexa user intents
     skill.onIntent('LaunchIntent', (alexaEvent) => {
         //Initial Configuration
@@ -153,10 +159,6 @@ exports.register = (skill) => {
         //Generating first question
         handleResponse(alexaEvent);
         return { reply: 'Intent.Launch', to: 'entry' }
-    });
-
-    skill.onState('playing', (alexaEvent) => {
-
     });
 
     skill.onIntent('AnswerIntent', (alexaEvent) => {
@@ -181,7 +183,7 @@ exports.register = (skill) => {
             }
             else{
                 handleResponse(alexaEvent);
-                return { reply: 'Intent.Question', to: 'die' };
+                return { reply: 'Intent.Question', to: 'entry' };
             }
         }
         catch (err){
