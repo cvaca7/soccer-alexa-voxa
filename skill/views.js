@@ -15,7 +15,7 @@ const views = (() => {
                 tell: `And error was ocurred {error}`
             },
             Finish : {
-                tell : 'Thank you for being playing with me, we\'ll play another time. Goodbye!'
+                tell : 'Your score was {score}, Thank you for being playing with me, we\'ll play another time. Goodbye!'
             }
 
         }

@@ -182,7 +182,6 @@ exports.register = (skill) => {
 
             console.log('slots: ' + JSON.stringify(res));
 
-
             //validate if the game is ended
             if(currIndex == gameLen - 1){
                 return { reply: 'Intent.Finish', to: 'die' };
