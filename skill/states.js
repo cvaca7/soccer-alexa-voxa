@@ -19,6 +19,7 @@ exports.register = (skill) => {
         try{
             //validate if the game is ended
             if(data.currIndex == data.gameLength - 1){
+                handleInput(alexaEvent);
                 return { reply: 'Intent.Finish', to: 'die' };
             }
 
