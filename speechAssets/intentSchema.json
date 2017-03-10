@@ -18,7 +18,7 @@
       ]
     },
     {
-      "intent": "AMAZON.StartOverIntent"
+      "intent": "AMAZON.HelpIntent"
     },
     {
       "intent": "AMAZON.StopIntent"

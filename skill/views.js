@@ -6,8 +6,12 @@ const views = (() => {
     return {
         Intent : {
             Launch : {
-                ask : `Welcome to Soccer Trivia, I will ask you some questions, try to get as many right as you can.
-                 Let\'s begin. ${timeBreak} {question}`
+                ask : `Welcome to Soccer Trivia, I will ask you some questions, 
+                try to get as many right as you can. If you need any help, please say help. 
+                Now, Let\'s begin. ${timeBreak} {question}`
+            },
+            Help: {
+              ask: `Ok, im going to repeat the question ${timeBreak}. {question}`
             },
             Question: {
                 ask: `Your answer is {isCorrect}, your score now is {score}. ${timeBreak} 

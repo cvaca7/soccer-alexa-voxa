@@ -13,6 +13,13 @@ exports.register = (skill) => {
         return { reply: 'Intent.Launch', to: 'entry' }
     });
 
+    skill.onIntent('AMAZON.HelpIntent', (alexaEvent) => {
+        return { reply: 'Intent.Help', to: 'entry' };
+    });
+
+    skill.onState('help', (alexaEvent) => {
+
+    });
 
     skill.onIntent('AnswerIntent', (alexaEvent) => {
         let data = alexaEvent.model.resources;

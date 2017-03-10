@@ -7,7 +7,10 @@ AnswerIntent the answer is {Person}
 AnswerIntent {Country}
 AnswerIntent the answer is {Country}
 
-AMAZON.StartOverIntent start game
-AMAZON.StartOverIntent new game
-AMAZON.StartOverIntent start
-AMAZON.StartOverIntent start new game
+AMAZON.HelpIntent can you repeat again please
+AMAZON.HelpIntent repeat again please
+AMAZON.HelpIntent repeat again
+AMAZON.HelpIntent repeat
+AMAZON.HelpIntent dunno
+AMAZON.HelpIntent don't know
+AMAZON.HelpIntent i don't know
