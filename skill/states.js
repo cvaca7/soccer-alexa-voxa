@@ -3,10 +3,17 @@
 exports.register = (skill) => {
     //On alexa user intents
     skill.onIntent('LaunchIntent', (alexaEvent) => {
-        
+
+        console.log('alexaEvent created: ', alexaEvent);
         //Initial Configuration
         initialConfiguration(alexaEvent);
-        
+
+        // Creating watcher
+        let cloudWatcher = alexaEvent.request.helpers.cloudwatch;
+
+        // New instance of the watcher
+        registerWatchEvent(cloudWatcher,1);
+
         //Generating first question
         handleOutput(alexaEvent);
         
@@ -14,11 +21,19 @@ exports.register = (skill) => {
     });
 
     skill.onIntent('AMAZON.HelpIntent', (alexaEvent) => {
-        return { reply: 'Intent.Help', to: 'entry' };
+        return { reply: 'Intent.RepeatQuestion', to: 'help' };
     });
 
     skill.onState('help', (alexaEvent) => {
-
+        let intent = alexaEvent.intent.name;
+        console.log(intent);
+        if(intent == 'AMAZON.YesIntent'){
+            return { reply: 'Intent.RepeatYes', to: 'entry' }
+        }
+        else if(intent == 'AMAZON.NoIntent'){
+            handleInput(alexaEvent);
+            return { reply: 'Intent.RepeatNo', to: 'entry' }
+        }
     });
 
     skill.onIntent('AnswerIntent', (alexaEvent) => {
@@ -54,6 +69,21 @@ exports.register = (skill) => {
     });
 
 };
+
+function registerWatchEvent(cloudWatchPlugin, value){
+    const cloudwatch = { putMetricData: (data, callback) => callback(null, 'foobar') };
+    const cloudwatchMock = simple.mock(cloudwatch, 'putMetricData');
+    const eventMetric = {
+        MetricData: [
+            {
+                Value: value
+            }
+        ],
+        Namespace: 'soccer-alexa-voxa'
+    };
+
+    cloudWatchPlugin(cloudwatch,cloudwatchMock,eventMetric)
+}
 
 function initialConfiguration(alexaEvent){
     //Setting up my resources

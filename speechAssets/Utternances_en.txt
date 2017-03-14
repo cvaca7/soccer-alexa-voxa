@@ -14,3 +14,13 @@ AMAZON.HelpIntent repeat
 AMAZON.HelpIntent dunno
 AMAZON.HelpIntent don't know
 AMAZON.HelpIntent i don't know
+
+
+AMAZON.YesIntent yes
+AMAZON.YesIntent ok
+AMAZON.YesIntent is ok
+AMAZON.YesIntent do it
+
+AMAZON.NoIntent no
+AMAZON.NoIntent no thank you
+AMAZON.NoIntent no thanks

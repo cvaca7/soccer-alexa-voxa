@@ -10,8 +10,14 @@ const views = (() => {
                 try to get as many right as you can. If you need any help, please say help. 
                 Now, Let\'s begin. ${timeBreak} {question}`
             },
-            Help: {
-              ask: `Ok, im going to repeat the question ${timeBreak}. {question}`
+            RepeatQuestion: {
+                ask: 'Do you want me to repeat the question?'
+            },
+            RepeatYes: {
+              ask: `Ok, here we are ${timeBreak}. {question}`
+            },
+            RepeatNo: {
+              ask: `Your score is {score} ${timeBreak}. Next Question. ${timeBreak} {question}`
             },
             Question: {
                 ask: `Your answer is {isCorrect}, your score now is {score}. ${timeBreak} 
