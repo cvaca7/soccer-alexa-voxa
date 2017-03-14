@@ -1,18 +1,18 @@
 'use strict';
-
+let _ = require('lodash');
 exports.register = (skill) => {
     //On alexa user intents
     skill.onIntent('LaunchIntent', (alexaEvent) => {
 
-        console.log('alexaEvent created: ', alexaEvent);
+        //console.log('alexaEvent created: ', alexaEvent);
         //Initial Configuration
         initialConfiguration(alexaEvent);
 
         // Creating watcher
-        let cloudWatcher = alexaEvent.request.helpers.cloudwatch;
+        //let cloudWatcher = alexaEvent.request.helpers.cloudwatch;
 
         // New instance of the watcher
-        registerWatchEvent(cloudWatcher,1);
+        //registerWatchEvent(cloudWatcher,1);
 
         //Generating first question
         handleOutput(alexaEvent);
@@ -143,9 +143,9 @@ function handleOutput(alexaEvent){
         questionsIndex = data.questionsReordered[currIndex],
 
         currQuestionObj = questions[questionsIndex],
-        answers = Object.values(currQuestionObj)[0],
+        answers = _.values(currQuestionObj)[0],
 
-        spokenQuestion = Object.keys(currQuestionObj)[0],
+        spokenQuestion = _.keys(currQuestionObj)[0],
         spokenAnswer = generateResponse(answers);
 
     //Setting up new question to be told
@@ -175,7 +175,7 @@ function handleInput(alexaEvent){
             questionsIndex = data.questionsReordered[currIndex - 1],
 
             currQuestionObj = questions[questionsIndex],
-            answers = Object.values(currQuestionObj)[0],
+            answers = _.values(currQuestionObj)[0],
 
             correctAnswerIndex = 0,
             correctAnswer = answers[correctAnswerIndex];
